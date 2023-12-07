@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TheBlogProject.Models
@@ -9,11 +10,11 @@ namespace TheBlogProject.Models
         public string AuthorId { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string Name { get; set; }
 
         [Required]
-        [StringLength(500, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
+        [StringLength(500, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 2)]
         public string Description { get; set; }
 
         [DataType(DataType.Date)]
@@ -33,5 +34,9 @@ namespace TheBlogProject.Models
         [NotMapped]
         public IFormFile Image {  get; set; }
 
+
+        //Navigation Properties
+        public virtual IdentityUser Author { get; set; }
+        public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
     }
 }
