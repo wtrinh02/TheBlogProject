@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
+using TheBlogProject.Services;
+using TheBlogProject.ViewModels;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<ApplicationDbContext>();
+    //.AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddDefaultUI()
     .AddDefaultTokenProviders()
@@ -25,7 +28,20 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+//Register my custom DataService Class
+builder.Services.AddScoped<DataService>();
+
+//Register a preconfigured instance of the MailSettings class
+var mailString = builder.Configuration.GetSection("MailSettings");
+builder.Services.Configure<MailSettings>(mailString);
+
+builder.Services.AddScoped<IBlogEmailSender, EmailService>();
+
 var app = builder.Build();
+
+
+var dataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataService>();
+await dataService.ManageDataAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
