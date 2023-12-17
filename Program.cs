@@ -26,7 +26,7 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 //Register my custom DataService Class
 builder.Services.AddScoped<DataService>();
@@ -40,9 +40,12 @@ builder.Services.AddScoped<IBlogEmailSender, EmailService>();
 //Register our Image Service
 builder.Services.AddScoped<IImageService, BasicImageService>();
 
+//Register the Slug Service
+builder.Services.AddScoped<ISlugService, BasicSlugService>();
+
 var app = builder.Build();
 
-
+//Pull out my registered DataService
 var dataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataService>();
 await dataService.ManageDataAsync();
 
