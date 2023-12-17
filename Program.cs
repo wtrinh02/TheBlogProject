@@ -37,6 +37,9 @@ builder.Services.Configure<MailSettings>(mailString);
 
 builder.Services.AddScoped<IBlogEmailSender, EmailService>();
 
+//Register our Image Service
+builder.Services.AddScoped<IImageService, BasicImageService>();
+
 var app = builder.Build();
 
 

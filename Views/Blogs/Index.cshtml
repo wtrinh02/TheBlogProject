@@ -1,4 +1,6 @@
-﻿@model IEnumerable<TheBlogProject.Models.Blog>
+﻿@using TheBlogProject.Services
+@inject IImageService imageService
+@model IEnumerable<TheBlogProject.Models.Blog>
 
 @{
     ViewData["Title"] = "Index";
@@ -27,12 +29,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.ImageDate)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BlogUser)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -52,13 +48,7 @@
                     @Html.DisplayFor(modelItem => blog.Updated)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => blog.ImageDate)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => blog.ContentType)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => blog.BlogUser.Id)
+                    <img src="@imageService.DecodeImage(blog.ImageDate, blog.ContentType)" />                    
             </td>
             <td>
                     <a asp-action="Edit" asp-route-id="@blog.Id">Edit</a> |
