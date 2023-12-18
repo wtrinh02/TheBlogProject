@@ -14,3 +14,27 @@
             </div>
         </div>
     </article>
+
+
+<hr />
+
+    <article>
+        <div class="row">
+            <div class="col text-center font-weight-bold h3">
+                Custom Post Tags
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+            @foreach(var tag in Model.Tags)
+            {
+                <a class="btn btn-warning btn-primary btn-outline-dark" asp-action="TagIndex" asp-rout-tag="@tag.Text.ToLower()">#@tag.Text</a>
+            }
+        </div>
+        </div>
+
+    </article>
+
+
+
+<hr />
