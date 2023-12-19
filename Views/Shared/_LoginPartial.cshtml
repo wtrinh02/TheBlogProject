@@ -7,22 +7,22 @@
 {
     BlogUser blogUser = (BlogUser)await UserManager.GetUserAsync(User);
     var displayName = blogUser.DisplayName;
-    <li class="nav-item">
-        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @displayName!</a>
+        <li class="nav-item align-self-lg-center mb-3 mb-lg-0">
+            <a class="nav-link px-lg-3 py-3 py-lg-4" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @displayName!</a>
     </li>
-    <li class="nav-item">
+        <li class="nav-item align-self-lg-center mx-0 mx-lg-3">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link ">Logout</button>
+                <button type="submit" class="nav-link align-self-lg-center btn btn-sm btn-warning rounded text-white py-1 px-2 fw-bold">Logout</button>
         </form>
     </li>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <li class="nav-item align-self-lg-center mb-3 mb-lg-0">
+            <a class="nav-link px-lg-3 py-3 py-lg-4" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <li class="nav-item align-self-lg-center mb-3 mb-lg-0">
+            <a class="nav-link px-lg-3 py-3 py-lg-4" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
 }
 </ul>

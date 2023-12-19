@@ -10604,12 +10604,12 @@ blockquote {
   padding: 0.75rem;
   text-transform: uppercase;
 }
-#mainNav .navbar-nav > li.nav-item > a.nav-link {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.0625em;
-  text-transform: uppercase;
-}
+    #mainNav .navbar-nav > li.nav-item > a.nav-link{
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.0625em;
+        text-transform: uppercase;
+    }
 @media (min-width: 992px) {
   #mainNav {
     border-bottom: 1px solid transparent;
@@ -10621,9 +10621,9 @@ blockquote {
   #mainNav .navbar-brand:focus, #mainNav .navbar-brand:hover {
     color: rgba(255, 255, 255, 0.8);
   }
-  #mainNav .navbar-nav > li.nav-item > a.nav-link {
-    color: #fff;
-  }
+    #mainNav .navbar-nav > li.nav-item > a.nav-link {
+        color: #fff;
+    }
   #mainNav .navbar-nav > li.nav-item > a.nav-link:focus, #mainNav .navbar-nav > li.nav-item > a.nav-link:hover {
     color: rgba(255, 255, 255, 0.8);
   }
