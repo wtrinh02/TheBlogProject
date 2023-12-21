@@ -25,3 +25,22 @@ div.swal2-container.swal2-center.swal2-backdrop-show > div {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
 }
+.card-img-top {
+    width: 100%;
+    height: 20vw;
+    object-fit: cover;
+}
+.card-text, .card-title{
+    
+    font-size: 19px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.card-text:hover, .card-title:hover {
+    white-space:normal;
+    overflow: visible;
+}
+.btn-work {
+    padding-left:18px;
+}

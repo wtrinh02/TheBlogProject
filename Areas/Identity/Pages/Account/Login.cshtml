@@ -5,26 +5,51 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
+
+<div class="row d-flex justify-content-center">
     <div class="col-md-4">
+        <h1>@ViewData["Title"]</h1>
         <section>
+            <div class="row d-flex gy-2 mt-5 mb-5 justify-content-start">
+                <div class="col-md-4">
+                    <form method="post">
+                        <input hidden asp-for="Input.Email" value="yelsew325@gmail.com" />
+                        <input hidden asp-for="Input.Password" value="Abc&123!" />
+                        <button typeof="submit" type="submit" class="w-100 btn btn-primary btn-dark me-2 text-nowrap btn-work">Demo Admin Login</button>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <form method="post">
+                        <input hidden asp-for="Input.Email" value="ModTestAccount@test.com" />
+                        <input hidden asp-for="Input.Password" value="Abc&123!" />
+                        <button typeof="submit" type="submit" class="w-100 btn btn-primary btn-dark me-2 text-nowrap text-center">Demo Mod Login</button>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <form method="post">
+                        <input hidden asp-for="Input.Email" value="theblogprojectdemouser@mailinator.com" />
+                        <input hidden asp-for="Input.Password" value="Abc&123!" />
+                        <button typeof="submit" type="submit" class="w-100 btn btn-primary btn-dark me-2 text-nowrap text-center">Demo User Login</button>
+                    </form>
+                </div>
+                <br />
+            </div>
             <form id="account" method="post">
                 <h2>Use a local account to log in.</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-floating">
+                <div class="form-floating mt-2">
                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
                     <label asp-for="Input.Email" class="form-label"></label>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
-                <div class="form-floating">
+                <div class="form-floating mt-2">
                     <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
                     <label asp-for="Input.Password" class="form-label"></label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div>
-                    <div class="checkbox">
+                    <div class="checkbox mt-4">
                         <label asp-for="Input.RememberMe" class="form-label">
                             <input class="form-check-input" asp-for="Input.RememberMe" />
                             @Html.DisplayNameFor(m => m.Input.RememberMe)
@@ -32,7 +57,7 @@
                     </div>
                 </div>
                 <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-dark btn-primary mt-4">Log in</button>
                 </div>
                 <div>
                     <p>

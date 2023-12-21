@@ -144,7 +144,7 @@ namespace TheBlogProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("BlogPostIndex", "Posts", new { id = blog.Id });
             }
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
             return View(blog);

@@ -1,4 +1,5 @@
-﻿
+﻿@using TheBlogProject.Enums
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -36,13 +37,24 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="About">About</a></li>
-                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="Contact">Contact</a></li>
-
+                    @if (User.IsInRole(BlogRole.Moderator.ToString()) == false && User.IsInRole(BlogRole.Administrator.ToString()) == false){
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="https://www.linkedin.com/in/wesleytrinh/" target="_blank">About</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    }
                     @if (User.IsInRole("Administrator"))
                     {
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Blogs" asp-action="Create">Create Blog</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Posts" asp-action="Create">Create Post</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="OriginalIndex">User Comments</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="ModeratedIndex">Moderated Comments</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="DeletedIndex">Deleted Comments</a></li>
+                    }
+                    @if (User.IsInRole("Moderator"))
+                    {
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="OriginalIndex">User Comments</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="ModeratedIndex">Moderated Comments</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="DeletedIndex">Deleted Comments</a></li>
                     }
                 </ul>
                     <partial name="_LoginPartial" />

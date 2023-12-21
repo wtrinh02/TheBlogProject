@@ -22,26 +22,25 @@ namespace TheBlogProject.Controllers
         }
 
         //GET: Comments
-           public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Comments.Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post);
-            return View(await applicationDbContext.ToListAsync());
-        }
+
         public async Task<IActionResult> OriginalIndex()
         {
-            var originalComments = await _context.Comments.ToListAsync();
+           
+            var originalComments = await _context.Comments.Where(c => c.Moderated == null).Where(c => c.Deleted == null).Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post).ToListAsync();
             return View("Index", originalComments);
         }
         public async Task<IActionResult> ModeratedIndex()
         {
-            var moderatedComments = await _context.Comments.Where(c => c.Moderated != null).ToListAsync();
+            
+            var moderatedComments = await _context.Comments.Where(c => c.Moderated != null).Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post).ToListAsync();
             return View("Index", moderatedComments);
         }
-      //  public async Task<IActionResult> DeletedIndex()
-      //  {
-       //     var applicationDbContext = _context.Comments.Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post);
-      //      return View(await applicationDbContext.ToListAsync());
-      //  }
+        public async Task<IActionResult> DeletedIndex()
+        {
+            
+            var deletedComments = await _context.Comments.Where(c => c.Deleted != null).Include(c => c.BlogUser).Include(c => c.Post).ToListAsync();
+            return View("Index", deletedComments);
+        }
 
         // GET: Comments/Details/5
 
@@ -64,7 +63,7 @@ namespace TheBlogProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var commentList = await _context.Comments.Include(c => c.Post).FirstOrDefaultAsync(c => c.PostId == comment.PostId);
+                
 
 
                 comment.BlogUserId = _userManager.GetUserId(User);
@@ -72,6 +71,7 @@ namespace TheBlogProject.Controllers
 
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
+                var commentList = await _context.Comments.Include(c => c.Post).FirstOrDefaultAsync(c => c.PostId == comment.PostId);
                 return RedirectToAction("Details", "Posts", new { slug = commentList.Post.Slug }, "commentSection");
             }
 
@@ -183,6 +183,58 @@ namespace TheBlogProject.Controllers
         }
 
 
+        public async Task<IActionResult> SoftDelete(int id)
+        {
+            if (id == null || _context.Comments == null)
+            {
+                return NotFound();
+            }
+            var newComment = await _context.Comments.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == id);
+            newComment.Deleted= DateTime.UtcNow;
+            newComment.Moderated = null;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Posts", new { slug = newComment.Post.Slug }, "commentSection");
+
+        }
+
+        public async Task<IActionResult> SoftDeleteMenu(int id)
+        {
+            if (id == null || _context.Comments == null)
+            {
+                return NotFound();
+            }
+            var newComment = await _context.Comments.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == id);
+            newComment.Deleted = DateTime.UtcNow;
+            newComment.Moderated = null;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("DeletedIndex", "Comments");
+
+        }
+
+        public async Task<IActionResult> UndoDelete(int id)
+        {
+            if (id == null || _context.Comments == null)
+            {
+                return NotFound();
+            }
+            var newComment = await _context.Comments.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == id);
+            newComment.Deleted = null;
+            if(newComment.ModeratedBody != null)
+            {
+                newComment.Moderated= DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("ModeratedIndex", "Comments");
+            }
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("OriginalIndex", "Comments");
+
+        }
+
+
+
         // GET: Comments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -213,7 +265,7 @@ namespace TheBlogProject.Controllers
             _context.Comments.Remove(comment);
             
             await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
+            return RedirectToAction("DeletedIndex", "Comments");
         }
 
         private bool CommentExists(int id)

@@ -11,6 +11,9 @@ using TheBlogProject.Models;
 using TheBlogProject.Services;
 using TheBlogProject.Enums;
 using X.PagedList;
+using TheBlogProject.ViewModels;
+using Microsoft.Extensions.Hosting;
+using System.Reflection.Metadata;
 
 namespace TheBlogProject.Controllers
 {
@@ -36,7 +39,7 @@ namespace TheBlogProject.Controllers
         {
             ViewData["SearchTerm"] = searchTerm;
             var pageNumber = page ?? 1;
-            var pageSize = 5;
+            var pageSize = 6;
 
             var posts = _blogSearchService.Search(searchTerm);
 
@@ -55,13 +58,15 @@ namespace TheBlogProject.Controllers
         //BlogPostIndex
         public async Task<IActionResult> BlogPostIndex (int? id, int? page) 
         {
-            if(id is null) 
+            var blog = await _context.Blogs.FindAsync(id);
+            ViewData["blogName"] = blog.Name;
+            if (id is null) 
             {
                 return NotFound();
             }
 
             var pageNumber = page ?? 1;
-            var pageSize = 5;
+            var pageSize = 6;
 
             //var posts = _context.Posts.Where(p=> p.BlogId == id).ToList();
 
@@ -73,9 +78,43 @@ namespace TheBlogProject.Controllers
             return View(posts);
         }
 
+        //Tag Index
+        public async Task<IActionResult> TagIndex(string tag, int? page)
+        {
+            if (tag is null)
+            {
+                return NotFound();
+            }
+
+            
+
+            var pageNumber = page ?? 1;  // null coelescing operator
+            var pageSize = 5;  // amount per page
+
+            var tagPosts = await _context.Tags
+                .Where(p => p.Text == tag)
+                .Include(p => p.Post)
+                .Include(u => u.BlogUser)
+                .OrderByDescending(p => p.Post.Created)
+                .ToPagedListAsync(pageNumber, pageSize);
+
+
+            ViewData["PostImageData"] = tagPosts[0].Post.ImageDate;
+            ViewData["PostImageType"] = tagPosts[0].Post.ContentType;
+
+
+            ViewData["TagText"] = tagPosts[0].Text;
+
+            TempData["CurrentPage"] = page;
+
+            return View(tagPosts);
+
+        }
+
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(string slug)
         {
+            ViewData["Title"] = "Post Details Page";
             if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
@@ -87,6 +126,8 @@ namespace TheBlogProject.Controllers
                 .Include(p=> p.Tags)
                 .Include(p => p.Comments)
                 .ThenInclude(c=> c.BlogUser)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.Moderator)
                 .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
@@ -97,10 +138,22 @@ namespace TheBlogProject.Controllers
         }
 
         // GET: Posts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? id)
         {
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id");
+            var blog = await _context.Blogs.FindAsync(id);
+            if(blog is not null)
+            {
+                ViewData["BlogName"] = blog.Name;
+                ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name",blog.Id);
+            }
+            else
+            {
+                ViewData["BlogName"] = "";
+            }
+ 
+
             return View();
         }
 
@@ -167,7 +220,8 @@ namespace TheBlogProject.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
- 
+
+
             return View(post);
         }
 
@@ -186,6 +240,7 @@ namespace TheBlogProject.Controllers
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", post.BlogId);
             ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
+            ViewData["oldBlog"] = post.BlogId;
 
             return View(post);
         }
@@ -204,16 +259,20 @@ namespace TheBlogProject.Controllers
 
             if (ModelState.IsValid)
             {
+
                 try
                 {
                     //get the old post
                     var newPost = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == post.Id);
 
+                    newPost.BlogId = post.BlogId;
                     newPost.Updated = DateTime.UtcNow;
                     newPost.Title = post.Title;
                     newPost.Abstract = post.Abstract;
                     newPost.Content = post.Content;
                     newPost.ReadyStatus = post.ReadyStatus;
+
+
 
                     var newSlug = _slugService.UrlFriendly(post.Title);
                     if(newSlug != newPost.Slug)
@@ -265,7 +324,8 @@ namespace TheBlogProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", post.BlogUserId);

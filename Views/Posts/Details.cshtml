@@ -5,7 +5,7 @@
 @inject IImageService imageService
 @inject UserManager<BlogUser> userManager
 
-@model TheBlogProject.ViewModels.PostDetailViewModel
+@model TheBlogProject.Models.Post
 
 
 @{
@@ -13,28 +13,15 @@
 }
 
 
-<article>
-    <div class="row">
-        <div class="col-9 border-right">
-            @Html.Raw(Model.Post.Content)
-        </div>
-        <div class="col-3 text-center font-weight-bold h6">
-            <div class="card">
-                <img class="card-img-top" src="/images/tags.png" alt="Tags...">
-                <div class="card-body">
-                    <h4 class="card-title">SYSTEM TAGS</h4>
-                    <div class="tagView">
-                        @foreach (var tag in Model.Tags)
-                        {
-                            <a asp-action="TagIndex" asp-route-tag="@tag" class="mb-1 btn btn-sm btn-warning btn-outline-dark">#@tag</a>
-                        }
-                    </div>
+    <article class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    @Html.Raw(Model.Content)
                 </div>
             </div>
         </div>
-    </div>
-
-</article>
+    </article>
 
 
 <hr />
@@ -49,7 +36,7 @@
             <div class="col text-center">
             @foreach(var tag in Model.Tags)
             {
-                <a class="btn btn-warning btn-primary btn-outline-dark" asp-action="TagIndex" asp-rout-tag="@tag.Text.ToLower()">#@tag.Text</a>
+                <a class="btn btn-warning btn-primary btn-outline-dark" asp-action="TagIndex" asp-route-tag="@tag.Text.ToLower()">#@tag.Text</a>
             }
         </div>
         </div>
@@ -145,7 +132,7 @@
             }
             else if (comment.Moderated is not null)
             {
-                <span class="small font-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.FullName has been Moderated...</span>
+                <span class="small font-italic text-danger">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.FullName has been Moderated...</span>
             }
 
             <hr />
@@ -178,7 +165,7 @@
             @****************************************************************
         SECTION 4: CAN WE RENDER THE MODERATE AND DELETE BUTTONS
         *****************************************************************@
-            @if (User.IsInRole(BlogRole.Moderator.ToString()) && comment.Deleted is null)
+            @if ((User.IsInRole(BlogRole.Moderator.ToString()) || User.IsInRole(BlogRole.Administrator.ToString())) && comment.Deleted is null)
             {
                 <hr>
                 <div class="row">
@@ -186,7 +173,7 @@
                         <button class="btn-sm btn-dark fw-bold" data-bs-toggle="modal" data-bs-target="#moderate_@comment.Id">MODERATE</button>
                     </div>
                     <div class="col-2">
-                        <form asp-action="Delete" asp-controller="Comments">
+                        <form asp-action="SoftDelete" asp-controller="Comments" asp-route-id=@comment.Id>
                             @Html.Hidden("Id", comment.Id)
                             @Html.Hidden("Slug", comment.Post.Slug)
                             <div class="d-grid d-block">

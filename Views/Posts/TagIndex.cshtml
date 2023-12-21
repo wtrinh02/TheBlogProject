@@ -5,50 +5,48 @@
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Web.Common
 
-
 @inject IImageService imageService
-
-@model IPagedList<Post>
+@model IPagedList<Tag>
 
 <div class="row ms-2 me-2">
     @if (Model.Count == 0)
     {
-        <h3>There are no posts with the term '@ViewData["SearchTerm"]'!</h3>
+        <h3>There are no posts with the tag: @Model.First().Text!</h3>
     }
     else
     {
-        <h3>Posts with the term '@ViewData["SearchTerm"]':</h3>
+        <h3>Posts with the tag: @Model.First().Text!</h3>
     }
-    @foreach (var post in Model)
+    @foreach (var tag in Model)
     {
         <div class="col-sm-2 col-lg-4 mt-3">
             <div class="card border-dark">
-                <img class="card-img-top" src="@imageService.DecodeImage(post.ImageDate,  post.ContentType)" />
+                <img class="card-img-top" src="@imageService.DecodeImage(tag.Post.ImageDate,  tag.Post.ContentType)" />
                 <div class="card-body text-center">
                     <div class="bg-warning">
                         <hr class="card-hr" />
-                        <h5 class="card-title">@post.Title</h5>
+                        <h5 class="card-title">@tag.Post.Title</h5>
                         <hr class="card-hr" />
                     </div>
                     <div>
-                        <p class="card-text">@post.Abstract</p>
+                        <p class="card-text">@tag.Post.Abstract</p>
                     </div>
 
                     <br />
                     <div class="text-center d-grid d-block">
-                        <a class="btn btn-dark btn-primary mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@post.Slug">Read More</a>
+                        <a class="btn btn-dark btn-primary mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@tag.Post.Slug">Read More</a>
                     </div>
                     @if (User.IsInRole(BlogRole.Administrator.ToString()))
                     {
                         <div class="text-center d-grid d-block">
-                            <a class="btn btn-danger btn-primary mb-2" asp-controller="Posts" asp-action="Edit" asp-route-slug="@post.Slug">Edit Post</a>
+                            <a class="btn btn-danger btn-primary mb-2" asp-controller="Posts" asp-action="Edit" asp-route-slug="@tag.Post.Slug">Edit Post</a>
                         </div>
 
 
                     }
 
                 </div>
-                
+
             </div>
 
         </div>
