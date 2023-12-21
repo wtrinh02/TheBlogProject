@@ -77,6 +77,41 @@ namespace TheBlogProject.Controllers
 
             return View(posts);
         }
+        public async Task<IActionResult> PostProductionIndex( int? page)
+        {
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+
+            var blogs = _context.Blogs.Include(b => b.BlogUser).Where(
+                b => b.Posts.Any(p => p.ReadyStatus != Enums.ReadyStatus.ProductionReady))
+                .OrderByDescending(b => b.Created)
+                .ToPagedListAsync(pageNumber, pageSize);
+
+
+            return View(await blogs);
+        }
+
+        public async Task<IActionResult> PostPreviewIndex(int? id, int? page)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            ViewData["blogName"] = blog.Name;
+            if (id is null)
+            {
+                return NotFound();
+            }
+
+            var pageNumber = page ?? 1;
+            var pageSize = 6;
+
+            //var posts = _context.Posts.Where(p=> p.BlogId == id).ToList();
+
+            var posts = await _context.Posts
+                .Where(p => p.BlogId == id && p.ReadyStatus != ReadyStatus.ProductionReady)
+                .OrderByDescending(p => p.Created)
+                .ToPagedListAsync(pageNumber, pageSize);
+
+            return View(posts);
+        }
 
         //Tag Index
         public async Task<IActionResult> TagIndex(string tag, int? page)
@@ -150,7 +185,7 @@ namespace TheBlogProject.Controllers
             }
             else
             {
-                ViewData["BlogName"] = "";
+                ViewData["BlogName"] = null;
             }
  
 
@@ -217,7 +252,7 @@ namespace TheBlogProject.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
 

@@ -1,4 +1,4 @@
-﻿button.btn-primary, a.btn-lg, a.btn-primary{
+﻿button.btn-primary, a.btn-lg, a.btn-primary, input.btn-primary{
     line-height: .5;
     border-radius: 10px;
 }
@@ -43,4 +43,12 @@ div.swal2-container.swal2-center.swal2-backdrop-show > div {
 }
 .btn-work {
     padding-left:18px;
+}
+.link-underline-primary{
+    text-decoration:underline;
+    text-align:center;
+}
+.link-underline-primarytwo {
+    text-decoration: underline;
+   
 }

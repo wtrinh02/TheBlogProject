@@ -1,0 +1,75 @@
+﻿@using TheBlogProject.Services
+@using TheBlogProject.Models
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@using TheBlogProject.Enums
+
+@inject IImageService imageService
+@model IPagedList<Post>
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+
+
+<h1 class="ms-3">Posts for @ViewData["blogName"]:</h1>
+
+
+<div class="row ms-2 me-2">
+    @foreach (var post in Model)
+    {
+        <div class="col-sm-2 col-lg-4 mt-3">
+            <div class="card border-dark">
+                <img class="card-img-top" src="@imageService.DecodeImage(post.ImageDate,  post.ContentType)" />
+                <div class="card-body text-center">
+                    <div class="bg-warning">
+                        <hr class="card-hr" />
+                        <h5 class="card-title">@post.Title</h5>
+                        <hr class="card-hr" />
+                    </div>
+                    <div>
+                        <p class="card-text">@post.Abstract</p>
+                    </div>
+
+                    <br />
+                    <div class="text-center d-grid d-block">
+                        <a class="btn btn-dark btn-primary mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@post.Slug">Read More</a>
+                    </div>
+                    @if (User.IsInRole(BlogRole.Administrator.ToString()))
+                    {
+                        <div class="text-center d-grid d-block">
+                            <a class="btn btn-danger btn-primary mb-2" asp-controller="Posts" asp-action="Edit" asp-route-slug="@post.Slug">Edit Post</a>
+                        </div>
+
+
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+</div>
+
+<hr />
+
+<!--Add Paging Controls here-->
+<div class="row ms-3 ">
+    <div class="col h3">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    </div>
+</div>
+
+<div class="row ms-3">
+    <div class="col">
+        @Html.PagedListPager(Model, page => Url.Action("BlogPostIndex", new { id = Model.FirstOrDefault().BlogId, page = page }),
+                 new PagedListRenderOptionsBase
+        {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" }
+        })
+    </div>
+</div>

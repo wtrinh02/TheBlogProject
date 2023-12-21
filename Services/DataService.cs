@@ -57,11 +57,11 @@ namespace TheBlogProject.Services
             //Create a new instance of BlogUser
             var adminUser = new BlogUser()
             {
-                Email = "yelsew325@gmail.com",
-                UserName = "yelsew325@gmail.com",
-                FirstName = "Admin",
-                LastName = "One",
-                DisplayName="TheAdmin",
+                Email = "AdminTestAccount@test.com",
+                UserName = "AdminTestAccount@test.com",
+                FirstName = "Demo",
+                LastName = "Admin",
+                DisplayName="Demo Admin",
                 PhoneNumber = "(800) 555-1212",
                 EmailConfirmed = true
             };
@@ -77,9 +77,9 @@ namespace TheBlogProject.Services
             {
                 Email = "ModTestAccount@test.com",
                 UserName = "ModTestAccount@test.com",
-                FirstName = "Mod",
-                LastName = "One",
-                DisplayName= "TheMod",
+                FirstName = "Demo",
+                LastName = "Mod",
+                DisplayName= "Demo Mod",
                 PhoneNumber = "(800) 555-1213",
                 EmailConfirmed = true
             };
@@ -87,6 +87,19 @@ namespace TheBlogProject.Services
             await _userManager.CreateAsync(modUser, "Abc&123!");
 
             await _userManager.AddToRoleAsync(modUser, BlogRole.Moderator.ToString());
+
+            var demoUser = new BlogUser()
+            {
+                Email = "UserTestAccount@test.com",
+                UserName = "UserTestAccount@test.com",
+                FirstName = "Demo",
+                LastName = "User",
+                DisplayName = "Demo User",
+                PhoneNumber = "(800) 555-1213",
+                EmailConfirmed = true
+            };
+
+            await _userManager.CreateAsync(demoUser, "Abc&123!");
 
         }
 
