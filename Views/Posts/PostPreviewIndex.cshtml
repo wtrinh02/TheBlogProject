@@ -13,8 +13,18 @@
 
 }
 
+@if (!Model.Any())
+{
+    <h1 class="text-center">No Posts Created for @ViewData["blogName"]!</h1>
+    <div class="link-underline-primary">
+        <a class="ms-3" asp-action="Create" asp-controller="Posts" asp-route-id=@ViewData["BlogId"]>Create a Post!</a>
+    </div>
+}
+else
+{
+    <h1 class="ms-3">Non-Production Ready Posts for @ViewData["blogName"]:</h1>
+}
 
-<h1 class="ms-3">Posts for @ViewData["blogName"]:</h1>
 
 
 <div class="row ms-2 me-2">
@@ -34,9 +44,7 @@
                     </div>
 
                     <br />
-                    <div class="text-center d-grid d-block">
-                        <a class="btn btn-dark btn-primary mb-2" asp-action="Details" asp-controller="Posts" asp-route-slug="@post.Slug">Read More</a>
-                    </div>
+
                     @if (User.IsInRole(BlogRole.Administrator.ToString()))
                     {
                         <div class="text-center d-grid d-block">
@@ -53,6 +61,14 @@
         </div>
     }
 </div>
+
+@if (Model.Any())
+{
+    <div class="link-underline-primarytwo mt-2">
+        <a class="ms-3" asp-action="PostProductionIndex" asp-controller="Posts">Go Back To Blogs in Production</a>
+    </div>
+}
+
 
 <hr />
 

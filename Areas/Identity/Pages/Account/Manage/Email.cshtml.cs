@@ -89,6 +89,9 @@ namespace TheBlogProject.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {

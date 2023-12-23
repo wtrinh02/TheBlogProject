@@ -14,6 +14,7 @@ using X.PagedList;
 using TheBlogProject.ViewModels;
 using Microsoft.Extensions.Hosting;
 using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TheBlogProject.Controllers
 {
@@ -58,6 +59,9 @@ namespace TheBlogProject.Controllers
         //BlogPostIndex
         public async Task<IActionResult> BlogPostIndex (int? id, int? page) 
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var blog = await _context.Blogs.FindAsync(id);
             ViewData["blogName"] = blog.Name;
             if (id is null) 
@@ -77,13 +81,18 @@ namespace TheBlogProject.Controllers
 
             return View(posts);
         }
+
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PostProductionIndex( int? page)
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var pageNumber = page ?? 1;
             var pageSize = 5;
 
-            var blogs = _context.Blogs.Include(b => b.BlogUser).Where(
-                b => b.Posts.Any(p => p.ReadyStatus != Enums.ReadyStatus.ProductionReady))
+            var blogs = _context.Blogs.Include(b => b.BlogUser)
+                .Where(b=> !b.Posts.Any() ||  b.Posts.Any(p => p.ReadyStatus != Enums.ReadyStatus.ProductionReady))
                 .OrderByDescending(b => b.Created)
                 .ToPagedListAsync(pageNumber, pageSize);
 
@@ -91,10 +100,15 @@ namespace TheBlogProject.Controllers
             return View(await blogs);
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PostPreviewIndex(int? id, int? page)
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var blog = await _context.Blogs.FindAsync(id);
             ViewData["blogName"] = blog.Name;
+            ViewData["BlogId"] = blog.Id;
             if (id is null)
             {
                 return NotFound();
@@ -149,6 +163,7 @@ namespace TheBlogProject.Controllers
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(string slug)
         {
+
             ViewData["Title"] = "Post Details Page";
             if (string.IsNullOrEmpty(slug))
             {
@@ -169,12 +184,20 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
+            @ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageDate, post.ContentType);
+            @ViewData["MainText"] = post.Title;
+            @ViewData["SubText"] = post.Abstract;
+
             return View(post);
         }
 
         // GET: Posts/Create
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create(int? id)
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id");
             var blog = await _context.Blogs.FindAsync(id);
@@ -197,6 +220,7 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
         {
             if (ModelState.IsValid)
@@ -261,8 +285,12 @@ namespace TheBlogProject.Controllers
         }
 
         // GET: Posts/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(string slug)
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             if (slug == null)
             {
                 return NotFound();
@@ -285,6 +313,7 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus")] Post post, IFormFile? newImage, List<string> tagValues)
         {
             if (id != post.Id)
@@ -368,6 +397,7 @@ namespace TheBlogProject.Controllers
         }
 
         // GET: Posts/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(string slug)
         {
             if (slug == null)
@@ -390,6 +420,7 @@ namespace TheBlogProject.Controllers
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Posts == null)

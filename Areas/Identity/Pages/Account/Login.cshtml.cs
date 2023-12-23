@@ -99,6 +99,10 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
+
             ReturnUrl = returnUrl;
         }
 

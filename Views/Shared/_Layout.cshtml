@@ -63,13 +63,13 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('/images/home-bg.jpg')">
+    <header class="masthead" style="background-image: url(@ViewData["HeaderImage"])">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="site-heading">
-                            <h1>Wesley's Blog Project</h1>
-                            <span class="subheading">Slowly Getting Better at Coding!</span>
+                            <h1>@ViewData["MainText"]</h1>
+                        <span class="subheading">@ViewData["SubText"]</span>
 
                             <form asp-action="SearchIndex" asp-controller="Posts">
                                 <div class="input-group mt-5">

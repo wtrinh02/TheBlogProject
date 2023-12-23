@@ -33,6 +33,10 @@ namespace TheBlogProject.Controllers
                 .OrderByDescending(b => b.Created)
                 .ToPagedListAsync(pageNumber, pageSize);
 
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
+
 
             return View(await blogs);
                 
@@ -46,6 +50,9 @@ namespace TheBlogProject.Controllers
 
         public IActionResult Contact()
         {
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             return View();
         }
 
@@ -55,6 +62,9 @@ namespace TheBlogProject.Controllers
         {
             model.Message = $"{model.Message} <hr/> Phone: {model.Phone}";
             await _emailSender.SendContactEmailAsync(model.Email, model.Name, model.Subject, model.Message);
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             return RedirectToAction("Index");
         }
 

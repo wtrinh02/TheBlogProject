@@ -25,19 +25,25 @@ namespace TheBlogProject.Controllers
 
         public async Task<IActionResult> OriginalIndex()
         {
-           
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var originalComments = await _context.Comments.Where(c => c.Moderated == null).Where(c => c.Deleted == null).Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post).ToListAsync();
             return View("Index", originalComments);
         }
         public async Task<IActionResult> ModeratedIndex()
         {
-            
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var moderatedComments = await _context.Comments.Where(c => c.Moderated != null).Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post).ToListAsync();
             return View("Index", moderatedComments);
         }
         public async Task<IActionResult> DeletedIndex()
         {
-            
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var deletedComments = await _context.Comments.Where(c => c.Deleted != null).Include(c => c.BlogUser).Include(c => c.Post).ToListAsync();
             return View("Index", deletedComments);
         }
