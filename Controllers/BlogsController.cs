@@ -78,7 +78,7 @@ namespace TheBlogProject.Controllers
 
                 _context.Add(blog);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("PostProductionIndex", "Posts");
             }
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
             return View(blog);
@@ -189,13 +189,23 @@ namespace TheBlogProject.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Blogs'  is null.");
             }
             var blog = await _context.Blogs.FindAsync(id);
+            var posts = await _context.Posts.Where(b  => b.BlogId == id).ToListAsync();
             if (blog != null)
             {
+                foreach(var post in posts)
+                {
+                    var comments = await _context.Comments.Where(c => c.PostId == post.Id).ToListAsync();
+                    foreach(var comment in comments)
+                    {
+                        _context.Comments.Remove(comment);
+                    }
+                    _context.Posts.Remove(post);
+                }
                 _context.Blogs.Remove(blog);
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         private bool BlogExists(int id)

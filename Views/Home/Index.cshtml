@@ -45,9 +45,11 @@
                         </div>
                         
                         <div class="text-center d-grid d-block">
-                            <a class="btn btn-danger btn-primary mb-2" asp-controller="Blogs" asp-action="Edit" asp-route-id="@blog.Id">Edit Blog</a>
+                            <a class="btn btn-secondary btn-primary mb-2" asp-controller="Blogs" asp-action="Edit" asp-route-id="@blog.Id">Edit Blog</a>
                         </div>
-                        
+                        <div class="text-center d-grid d-block">
+                            <a class="btn btn-danger btn-primary mb-2" asp-controller="Blogs" asp-action="Delete" asp-route-id="@blog.Id">Delete Blog</a>
+                        </div>
                     }
 
                 </div>

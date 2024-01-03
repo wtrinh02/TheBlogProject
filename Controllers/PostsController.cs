@@ -39,6 +39,9 @@ namespace TheBlogProject.Controllers
         public async Task<IActionResult> SearchIndex(int? page, string searchTerm)
         {
             ViewData["SearchTerm"] = searchTerm;
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
             var pageNumber = page ?? 1;
             var pageSize = 6;
 
@@ -135,7 +138,9 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            
+            @ViewData["HeaderImage"] = "/images/home-bg.jpg";
+            @ViewData["MainText"] = "Wesley's Blog Project";
+            @ViewData["SubText"] = "Slowly Getting Better at Coding!";
 
             var pageNumber = page ?? 1;  // null coelescing operator
             var pageSize = 5;  // amount per page
@@ -147,12 +152,10 @@ namespace TheBlogProject.Controllers
                 .OrderByDescending(p => p.Post.Created)
                 .ToPagedListAsync(pageNumber, pageSize);
 
-
-            ViewData["PostImageData"] = tagPosts[0].Post.ImageDate;
-            ViewData["PostImageType"] = tagPosts[0].Post.ContentType;
+            ViewData["TagName"] = tag;
 
 
-            ViewData["TagText"] = tagPosts[0].Text;
+
 
             TempData["CurrentPage"] = page;
 
@@ -430,11 +433,16 @@ namespace TheBlogProject.Controllers
             var post = await _context.Posts.FindAsync(id);
             if (post != null)
             {
+                var comments = await _context.Comments.Where(c => c.PostId == id).ToListAsync();
+                foreach (var comment in comments)
+                {
+                    _context.Comments.Remove(comment);
+                }
                 _context.Posts.Remove(post);
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
         }
 
         private bool PostExists(int id)
